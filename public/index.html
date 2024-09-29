@@ -129,7 +129,7 @@
                 </p>
                 
             </div>
-        <button class="randomize">Randomize</button>
+        
         </div>
 
     </div>
@@ -141,8 +141,8 @@
             All rights reserved &copy; Deepak
         </div>
     </div>
-<script>
-// displaying normal pie chart
+    <script>
+        // displaying normal pie chart
         var dataSource = {
             datasets: [
                 {
@@ -153,38 +153,45 @@
                         '#f5426f',
                         '#42f59b',
                         '#ddf542',
-                        '#f58142',  
+                        '#f58142',
+                        '#358142',
+
                     ],
                 }],
-            
+            // These labels appear in the legend and in the tooltips when hovering different arcs
             labels: []
         };
 
-        function createChart() {
-            var ctx = document.getElementById("myChart").getContext("2d");
-            var myChart = new Chart(ctx, {
-                type: 'pie',
-                data: dataSource
-            }
-            );
-        }
-        function getBudget(){
-            axios.get('/budget')
-            .then(function (res){
+    function createChart() {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: dataSource
+        });
+    }
 
-                for(var i=0;i<res.data.mybudget.length;i++){
+    function getBudget() {
+        axios.get('http://localhost:3000/budget')
+            .then(function (res) {
+                                for (var i = 0; i < res.data.mybudget.length; i++) {
                     dataSource.datasets[0].data[i] = res.data.mybudget[i].budget;
                     dataSource.labels[i] = res.data.mybudget[i].title;
-                    
                 }
                 createChart();
+                let budgetData = res.data.mybudget.map(function (item) {
+                    return {
+                        label: item.title,
+                        value: item.budget
+                    };
+                });
+                change(budgetData);
             });
-        }
-        getBudget();
-</script>
+    }
 
-<script>
- var svg = d3.select("#chart")
+    getBudget();
+
+
+    var svg = d3.select("#chart")
         .append("svg")
         .append("g")
 
@@ -195,8 +202,8 @@
     svg.append("g")
         .attr("class", "lines");
 
-    var width = 960,
-        height = 450,
+    var width = 250,
+        height = 100,
         radius = Math.min(width, height) / 2;
 
     var pie = d3.layout.pie()
@@ -215,35 +222,26 @@
 
     svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-    var key = function (d) { return d.data.label; };
+    var key = function (d) {
+        return d.data.label;
+    };
 
     var color = d3.scale.ordinal()
         .domain(["Lorem ipsum", "dolor sit", "amet", "consectetur", "adipisicing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt"])
         .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
-    function randomData() {
-        var labels = color.domain();
-        return labels.map(function (label) {
-            return { label: label, value: Math.random() }
-        });
-    }
-
-    change(randomData());
-
-    d3.select(".randomize")
-        .on("click", function () {
-            change(randomData());
-        });
-
 
     function change(data) {
 
+        /* ------- PIE SLICES -------*/
         var slice = svg.select(".slices").selectAll("path.slice")
             .data(pie(data), key);
 
         slice.enter()
             .insert("path")
-            .style("fill", function (d) { return color(d.data.label); })
+            .style("fill", function (d) {
+                return color(d.data.label);
+            })
             .attr("class", "slice");
 
         slice
@@ -260,6 +258,7 @@
         slice.exit()
             .remove();
 
+        /* ------- TEXT LABELS -------*/
 
         var text = svg.select(".labels").selectAll("text")
             .data(pie(data), key);
@@ -300,6 +299,8 @@
         text.exit()
             .remove();
 
+        /* ------- SLICE TO TEXT POLYLINES -------*/
+
         var polyline = svg.select(".lines").selectAll("polyline")
             .data(pie(data), key);
 
@@ -314,17 +315,17 @@
                 return function (t) {
                     var d2 = interpolate(t);
                     var pos = outerArc.centroid(d2);
-                    pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                    pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
                     return [arc.centroid(d2), outerArc.centroid(d2), pos];
                 };
             });
 
         polyline.exit()
             .remove();
-    };
+    }
 
 
-</script>
+    </script>
 
 
 </body>
