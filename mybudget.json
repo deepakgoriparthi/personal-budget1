@@ -2,31 +2,38 @@
     "mybudget": [
       {
         "title": "Eat out",
-        "budget": 40
+        "budget": 40,
+        "color": "#GG2244"
       },
       {
         "title": "Rent",
-        "budget": 150
+        "budget": 150,
+        "color": "#HH3366"
       },
       {
         "title": "Groceries",
-        "budget": 110
+        "budget": 110,
+        "color": "#EF1122"
       },
       {
         "title": "car",
-        "budget": 40
+        "budget": 40,
+        "color": "#32a852"
       },
       {
         "title": "Travel",
-        "budget": 20
+        "budget": 20,
+        "color": "#3299a8"
       },
       {
         "title": "Movies",
-        "budget": 10
+        "budget": 10,
+        "color": "#a88732"
       },
       {
         "title": "Invest",
-        "budget": 50
+        "budget": 50,
+        "color": "#a83297"
       }
     ]
   }
